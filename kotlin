@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         // 2. 获取输入框里的字（注意：要加 .toString() 转换成文本）
         // val currentText = myInput.text.toString()
 
-        // 3. 控制出现和消失（你刚才特别提到的！）
+        // 3. 控制出现和消失
         // View.VISIBLE   -> 出现（默认）
         // View.INVISIBLE -> 隐身（看不见，但还占着位置）
         // View.GONE      -> 消失（看不见，且把位置腾出来）
