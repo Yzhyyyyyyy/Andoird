@@ -1,0 +1,200 @@
+一、 所有控件通用的“万能属性”
+不管是什么布局、什么控件，下面这些代码都是通用的。
+
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    【第一部分：通用基础属性】
+    这里用一个空白的 <View> (基础视图) 来给你演示所有控件都有的通用代码。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 
+        1. 身份标识 (ID)：Kotlin 代码找人全靠它，必须以 @+id/ 开头
+        2. 宽和高 (Width/Height)：
+           - match_parent：填满父容器（撑到最大）
+           - wrap_content：包裹内容（内容多大它多大）
+           - 固定数值：如 "100dp" (安卓里尺寸单位必须用 dp)
+        3. 外边距 (Margin)：推开别人，距离外面的控件有多远
+           - layout_margin：上下左右同时设置
+           - layout_marginTop / Bottom / Start(左) / End(右)：单独设置某个方向
+        4. 内边距 (Padding)：撑大自己，控件边界距离里面的内容有多远
+        5. 背景 (Background)：可以是颜色 (#FF0000) 或者图片 (@drawable/图片名)
+        6. 可见性 (Visibility)：
+           - visible：可见（默认）
+           - invisible：隐身（看不见，但还占着位置）
+           - gone：消失（看不见，且不占位置）
+    -->
+    <View
+        android:id="@+id/myCommonView"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:background="#E0E0E0"
+        android:visibility="visible" />
+
+</LinearLayout>
+二、 四大核心布局容器（决定零件怎么排版）
+布局就像是“收纳盒”，不同的收纳盒有不同的摆放规则。
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    【第二部分：四大核心布局】
+    注意：实际开发中，最外层通常只选其中一种布局。这里为了展示，我把它们写在一起。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- 
+        【1. 线性布局 LinearLayout】
+        特点：像排队一样，要么全竖排，要么全横排。
+        专属代码：
+        - android:orientation="vertical" (竖排) 或 "horizontal" (横排)
+        - android:gravity="center" (让盒子里的所有东西居中)
+        - android:layout_weight="1" (权重：按比例瓜分剩余空间，通常配合宽或高为0dp使用)
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+    </LinearLayout>
+
+    <!-- 
+        【2. 约束布局 ConstraintLayout】 (你目前正在用的，最强大)
+        特点：太空中漂浮，靠“弹簧”互相拉扯来定位。
+        专属代码 (四根基础弹簧)：
+        - app:layout_constraintTop_toTopOf="parent" (顶部对齐父容器)
+        - app:layout_constraintBottom_toBottomOf="parent" (底部对齐父容器)
+        - app:layout_constraintStart_toStartOf="parent" (左侧对齐父容器)
+        - app:layout_constraintEnd_toEndOf="parent" (右侧对齐父容器)
+        进阶弹簧：
+        - app:layout_constraintTop_toBottomOf="@+id/某个ID" (把我的顶部，拉到另一个控件的底部 -> 即我在它下面)
+    -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 
+        【3. 相对布局 RelativeLayout】 (老版本常用，现在多被约束布局替代)
+        特点：靠“关系”定位。
+        专属代码：
+        - android:layout_centerInParent="true" (在父容器正中间)
+        - android:layout_below="@+id/某个ID" (在谁的下方)
+        - android:layout_toEndOf="@+id/某个ID" (在谁的右方)
+    -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+    </RelativeLayout>
+
+    <!-- 
+        【4. 帧布局 FrameLayout】
+        特点：像千层饼一样，一层一层往上叠。后写的代码会盖在先写的代码上面。
+        专属代码：
+        - android:layout_gravity="bottom|end" (控制自己在这个大饼里的位置，比如右下角)
+    -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+    </FrameLayout>
+
+</LinearLayout>
+三、 四大基础控件（用户能看到和操作的零件）
+这些是你往“收纳盒”里放的具体物品。
+
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    【第三部分：四大基础控件】
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- 
+        【1. 文本框 TextView】 (只读文字)
+        专属/常用代码：
+        - android:text="显示的文字" (建议把文字提取到 strings.xml，但新手直接写也行)
+        - android:textColor="#000000" (文字颜色，#000000是黑色)
+        - android:textSize="18sp" (文字大小，安卓里字号必须用 sp)
+        - android:textStyle="bold|italic" (文字样式：粗体|斜体)
+        - android:gravity="center" (文字在控件内部居中)
+        - android:maxLines="2" (最多显示几行)
+        - android:ellipsize="end" (文字太长显示不下时，在末尾显示省略号...)
+    -->
+    <TextView
+        android:id="@+id/myTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="这是一段很长很长的测试文字..."
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <!-- 
+        【2. 输入框 EditText】 (用户打字)
+        专属/常用代码：
+        - android:hint="请输入密码" (提示词，用户一打字就会消失)
+        - android:textColorHint="#999999" (提示词的颜色)
+        - android:inputType="textPassword" (输入类型：密码模式，打字变成小黑点)
+          * 其他 inputType: "number"(只能输数字), "text"(普通文本)
+        - android:maxLength="11" (限制最多输入多少个字符，比如手机号11位)
+    -->
+    <EditText
+        android:id="@+id/myEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="请输入6位数字密码"
+        android:textColorHint="#AAAAAA"
+        android:inputType="numberPassword"
+        android:maxLength="6" />
+
+    <!-- 
+        【3. 按钮 Button】 (点击交互)
+        专属/常用代码：
+        - android:text="确认提交" (按钮上的字)
+        - android:textAllCaps="false" (安卓默认会把按钮英文全变大写，设为false取消此设定)
+        - android:backgroundTint="#6200EE" (按钮的背景颜色，新版安卓推荐用这个改按钮颜色)
+    -->
+    <Button
+        android:id="@+id/myButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:text="登录"
+        android:textAllCaps="false"
+        android:backgroundTint="#FF5722"
+        android:textColor="#FFFFFF" />
+
+    <!-- 
+        【4. 图片 ImageView】 (展示图片)
+        专属/常用代码：
+        - android:src="@drawable/ic_launcher_background" (图片来源，通常放在 res/drawable 文件夹下)
+        - android:scaleType="centerCrop" (图片缩放模式)
+          * centerCrop：按比例放大，填满控件，多余部分裁剪掉（最常用，不变形）
+          * fitCenter：按比例缩小，完整显示图片，两边可能留白
+          * center：不缩放，直接把图片原封不动放中间
+    -->
+    <ImageView
+        android:id="@+id/myImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:src="@mipmap/ic_launcher"
+        android:scaleType="centerCrop" />
+
+</LinearLayout>
