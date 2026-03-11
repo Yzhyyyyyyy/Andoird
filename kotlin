@@ -1,67 +1,175 @@
-package com.example.demo001
+/* ==============================================================================
+ * 【Android 核心启动逻辑与 Kotlin 控件操作全解析（C++ 视角版）】
+ * 
+ * 说明：这不仅是一段代码，更是你理解 Android 底层逻辑的备忘录。
+ * 建议：直接在 Android Studio 中阅读，结合高亮效果更佳。
+ * ============================================================================== */
 
-import androidx.appcompat.app.AppCompatActivity
+// 1. 【命名空间】
+// [C++ 视角]: 相当于 namespace com::example::demo001; 
+// 作用：告诉系统这个类的“家庭住址”，防止全世界成千上万的 App 出现同名冲突。
+package com.example.demo001 
+
+// 2. 【引入依赖】
+// [C++ 视角]: 完全等同于 #include <xxx>
+// 作用：引入 Android 系统底层写好的各种 UI 控件（Struct/Class），不引入编译器就不认识。
+import android.graphics.Color
 import android.os.Bundle
-// 下面这些 import 是导入控件的包，Android Studio 通常会按 Alt+Enter 自动帮你加
-import android.view.View 
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
 import android.widget.Button
-import android.widget.TextView
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
+// 3. 【类的继承与入口】
+// [C++ 视角]: 相当于 class MainActivity : public AppCompatActivity
+// 作用：继承系统提供的标准窗口模板，白嫖底层几万行的窗口管理代码。
 class MainActivity : AppCompatActivity() {
-    
-    // onCreate 是这个界面的“入口”，界面一打开，就会执行这里面的代码
+
+    // 4. 【生命周期起点】
+    // onCreate 是界面的入口函数，界面一被创建就会立刻执行这里。
     override fun onCreate(savedInstanceState: Bundle?) {
+        
+        // 【铁律 1】：呼叫老爸（系统底层）打地基、分配内存。必须放在第一行！
         super.onCreate(savedInstanceState)
-        // 这一行是把 XML 布局文件加载进来（把长相铺好）
+        
+        // 【铁律 2】：把你的 XML 布局文件（长相）铺设到屏幕上。
+        // 所有的 findViewById 必须写在这行代码之后！
         setContentView(R.layout.activity_main)
 
         /* =========================================================
-           【第一步：找人】 (通过 ID 把 XML 里的控件拉到 Kotlin 里来)
+           【第一步：获取 Struct 的引用 (跨界绑定)】
+           ---------------------------------------------------------
+           [C++ 视角]: 
+           1. R.id 是系统自动生成的“字典”，把 XML 里的名字翻译成了整数 ID。
+           2. findViewById 相当于在内存里找到了那个控件，并返回一个引用（Reference）。
+           3. 拿到引用后，Kotlin 统一规定用 `.` (点) 来访问其内部成员。
            ========================================================= */
-        // val 意思是声明一个“不可变”的变量（代号）。
-        // findViewById<控件类型>(R.id.你在XML里写的ID)
         val myTitle = findViewById<TextView>(R.id.myTitle)
         val myInput = findViewById<EditText>(R.id.myInput)
         val myButton = findViewById<Button>(R.id.myButton)
 
+        // 定义一个类内部的全局变量，用来记录按钮被点击的次数（模拟状态机）
+        var clickCount = 0 
+
         /* =========================================================
-           【第二步：做事】 (直接用代码修改控件的属性)
+           【第二步：初始化属性 (像操作 C++ struct 一样修改成员)】
            ========================================================= */
-        // 1. 改文字
-        myTitle.text = "准备就绪！"
+        myTitle.text = "欢迎来到 Android 世界"
+        myTitle.textSize = 22f               // f 代表 float 浮点数
+        myTitle.setTextColor(Color.DKGRAY)   // 设置为深灰色
         
-        // 2. 获取输入框里的字（注意：要加 .toString() 转换成文本）
-        // val currentText = myInput.text.toString()
-
-        // 3. 控制出现和消失
-        // View.VISIBLE   -> 出现（默认）
-        // View.INVISIBLE -> 隐身（看不见，但还占着位置）
-        // View.GONE      -> 消失（看不见，且把位置腾出来）
-        // myTitle.visibility = View.GONE 
+        myButton.text = "提交数据"
+        myButton.isEnabled = false           // 初始状态下，禁用按钮（变成灰色不可点）
 
         /* =========================================================
-           【第三步：触发逻辑】 (给控件装上“监听耳朵”，等待用户操作)
+           【第三步：火力全开的交互逻辑 (你可能会用到的所有核心逻辑)】
            ========================================================= */
-        // setOnClickListener 就是“设置点击监听器”
-        // 只要用户点了一下这个按钮，大括号 { } 里面的代码就会立刻执行！
-        myButton.setOnClickListener {
+
+        // ---------------------------------------------------------
+        // 逻辑 1：【实时监听输入框文字变化】(TextWatcher)
+        // 场景：用户一边打字，系统一边校验。比如密码必须大于6位才允许点击按钮。
+        // ---------------------------------------------------------
+        myInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             
-            // 动作 1：拿到用户在输入框里打的字
-            val userName = myInput.text.toString()
-            
-            // 动作 2：做个判断（如果用户没打字）
-            if (userName.isEmpty()) {
-                myTitle.text = "警告：名字不能为空！"
-            } else {
-                // 如果用户打了字，就把文字改掉
-                // Kotlin 里用 $ 符号可以直接把变量拼接到字符串里
-                myTitle.text = "欢迎你，大侠 $userName！"
+            // 我们通常只关心这个：文字改变【之后】触发
+            override fun afterTextChanged(s: Editable?) {
+                val currentText = s.toString().trim()
                 
-                // 动作 3：点击完按钮后，让输入框“消失”
-                myInput.visibility = View.GONE
+                // 动态控制按钮的可用状态：只有输入了文字，按钮才亮起（可点击）
+                if (currentText.isNotEmpty()) {
+                    myButton.isEnabled = true
+                    myTitle.text = "正在输入: $currentText"
+                    myTitle.setTextColor(Color.BLUE)
+                } else {
+                    myButton.isEnabled = false
+                    myTitle.text = "名字不能为空！"
+                    myTitle.setTextColor(Color.RED)
+                }
+            }
+        })
+
+        // ---------------------------------------------------------
+        // 逻辑 2：【焦点变化监听】(FocusChangeListener)
+        // 场景：用户手指点进了输入框（获得焦点），或者点到了别的地方（失去焦点）。
+        // ---------------------------------------------------------
+        myInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                // 获得焦点时，把输入框的提示文字清空
+                myInput.hint = "请输入..."
+            } else {
+                // 失去焦点时，恢复提示文字
+                myInput.hint = "点击这里输入名字"
             }
         }
+
+        // ---------------------------------------------------------
+        // 逻辑 3：【普通点击事件与状态切换】(OnClickListener)
+        // 场景：处理业务逻辑、多重条件判断、数组操作、UI 状态切换。
+        // ---------------------------------------------------------
+        myButton.setOnClickListener {
+            // 每次点击，计数器 +1
+            clickCount++ 
+            
+            val userName = myInput.text.toString().trim()
+
+            // 逻辑分支：根据名字长度给出不同反应
+            when { // Kotlin 中的 when 相当于 C++ 里的超级 switch-case
+                userName.length < 3 -> {
+                    Toast.makeText(this, "名字太短啦，再多打几个字！", Toast.LENGTH_SHORT).show()
+                }
+                userName == "admin" -> {
+                    myTitle.text = "警告：不能使用管理员名称！"
+                    myTitle.setTextColor(Color.RED)
+                    myInput.setText("") // 强行清空输入框
+                }
+                else -> {
+                    // 正常逻辑：处理成功
+                    myTitle.text = "登录成功，尊贵的 $userName！"
+                    myTitle.setTextColor(Color.parseColor("#008000")) // 绿色
+                    
+                    // 隐藏输入框 (GONE: 彻底消失且不占位置；INVISIBLE: 隐身但占位置)
+                    myInput.visibility = View.GONE 
+                    
+                    // 改变按钮形态，变成一个“返回”按钮
+                    myButton.text = "重新登录 (已点击 $clickCount 次)"
+                    
+                    // 【延时操作逻辑】：模拟网络请求，2秒后自动执行大括号里的代码
+                    myTitle.postDelayed({
+                        Toast.makeText(this, "数据已同步至云端", Toast.LENGTH_SHORT).show()
+                    }, 2000) // 2000 毫秒 = 2 秒
+                }
+            }
+        }
+
+        // ---------------------------------------------------------
+        // 逻辑 4：【长按事件】(OnLongClickListener)
+        // 场景：隐藏功能、删除确认、恢复出厂设置。
+        // ---------------------------------------------------------
+        myButton.setOnLongClickListener {
+            // 恢复所有控件到初始状态
+            clickCount = 0
+            
+            myTitle.text = "系统已重置，欢迎回来"
+            myTitle.setTextColor(Color.DKGRAY)
+            
+            myInput.visibility = View.VISIBLE // 让输入框重新显示出来
+            myInput.setText("")               // 清空文字
+            
+            myButton.text = "提交数据"
+            myButton.isEnabled = false        // 重新禁用按钮，等待 TextWatcher 唤醒
+            
+            Toast.makeText(this, "已恢复出厂设置！", Toast.LENGTH_SHORT).show()
+            
+            // [C++ 视角]: 必须 return true。
+            // 意思是告诉系统：“这个长按事件被我拦截并消化了，不要再去触发普通的 Click 事件了”。
+            true 
+        }
         
-    } // onCreate 结束
-}
+    } // onCreate 函数结束
+} // MainActivity 类结束
