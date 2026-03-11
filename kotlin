@@ -1,0 +1,105 @@
+1. 变量声明：val 与 var (告别繁琐的类型声明)
+在 C++ 里，你必须写明类型：int a = 10; 或者 const std::string s = "hello";。
+Kotlin 拥有强大的类型推导（类似 C++11 的 auto），你几乎不需要写类型。
+
+val (Value / 常量)：赋值一次后不可修改。
+C++ 对应： const auto
+Kotlin 写法： val name = "张三" （系统自动推导为 String）
+var (Variable / 变量)：可以随时修改。
+C++ 对应： auto
+Kotlin 写法： var age = 18 ；下一行可以写 age = 19。
+🌟 铁律： 在 Kotlin 中，能用 val 就绝不用 var。这能极大减少 Bug。
+
+2. 终极条件判断：when (吊打 C++ 的 switch)
+你刚才问到的 when，是 Kotlin 里最爽的语法之一。
+在 C++ 里，switch 只能判断整数或枚举，而且每个 case 后面必须写烦人的 break;，否则会“穿透”引发灾难。
+Kotlin 的 when 不需要 break，且什么都能判断！
+
+用法 A：带参数的 when（替代普通 switch）
+
+复制
+val status = 404
+when (status) {
+    200 -> println("成功")
+    404, 500 -> println("网络错误") // 逗号表示“或者”
+    in 201..299 -> println("其他成功状态") // 判断是否在一个区间内
+    else -> println("未知错误") // 相当于 C++ 的 default
+}
+用法 B：不带参数的 when（替代长串的 if-else if）
+这就是你刚才代码里看到的写法，非常适合多重条件判断：
+
+复制
+val userName = "admin"
+when {
+    userName.isEmpty() -> println("名字为空")
+    userName.length < 3 -> println("名字太短")
+    userName == "admin" -> println("禁止使用管理员")
+    else -> println("名字合法")
+}
+3. 字符串拼接：魔法符号 $
+在 C++ 里拼接字符串很痛苦："欢迎 " + name + "，你今天走了 " + to_string(steps) + " 步"。
+Kotlin 直接把变量嵌进字符串里：
+
+复制
+val name = "张三"
+val age = 20
+
+// 直接用 $ 符号跟上变量名
+val msg1 = "你好 $name，你今年 $age 岁了。"
+
+// 如果要调用函数或属性，用 ${} 括起来
+val msg2 = "你的名字有 ${name.length} 个字。" 
+4. 彻底消灭空指针：? 和 ?. (Kotlin 最伟大的发明)
+在 C++ 里，如果你访问了一个空指针（NULL 或 nullptr），程序会直接崩溃（段错误 Segfault）。
+Kotlin 在编译阶段就强行杜绝了空指针。
+
+默认情况下，变量绝对不允许为空（null）：
+var text: String = null // ❌ 编译器直接报错红线！
+
+如果你非要让它能为空，必须加上 ?：
+var text: String? = null // ✅ 加上问号，表示“这个字符串可能是空的”
+
+安全调用符 ?. (神技)：
+如果你想获取一个可能为空的对象的属性，C++ 里你要写 if (ptr != nullptr) { ptr->doSomething(); }。
+Kotlin 只需要一个符号：
+
+复制
+var name: String? = null
+// 如果 name 是空的，这行代码会自动跳过，绝对不会崩溃！
+val length = name?.length 
+5. if-else 是有返回值的！(替代三元运算符)
+在 C++ 里，我们经常用三元运算符：int max = (a > b) ? a : b;
+Kotlin 没有三元运算符，因为它的 if-else 直接就能当值用：
+
+复制
+val a = 10
+val b = 20
+
+// 直接把 if 的结果赋值给 max
+val max = if (a > b) {
+    a 
+} else {
+    b 
+}
+
+// 简写成一行：
+val max = if (a > b) a else b
+6. 循环：for 的极简写法
+C++ 经典的 for(int i = 0; i < 10; i++) 在 Kotlin 里被淘汰了。Kotlin 采用了更符合人类直觉的区间（Range）遍历：
+
+复制
+// 1. 遍历 0 到 9 (包含 9)
+for (i in 0..9) {
+    println(i)
+}
+
+// 2. 遍历 0 到 9 (不包含 10，常用于数组索引)
+for (i in 0 until 10) {
+    println(i)
+}
+
+// 3. 遍历数组/列表 (相当于 C++11 的 for(auto item : list))
+val names = arrayOf("张三", "李四", "王五")
+for (name in names) {
+    println(name)
+}
