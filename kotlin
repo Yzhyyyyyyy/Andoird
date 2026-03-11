@@ -1,0 +1,67 @@
+package com.example.demo001
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+// 下面这些 import 是导入控件的包，Android Studio 通常会按 Alt+Enter 自动帮你加
+import android.view.View 
+import android.widget.Button
+import android.widget.TextView
+import android.widget.EditText
+
+class MainActivity : AppCompatActivity() {
+    
+    // onCreate 是这个界面的“入口”，界面一打开，就会执行这里面的代码
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // 这一行是把 XML 布局文件加载进来（把长相铺好）
+        setContentView(R.layout.activity_main)
+
+        /* =========================================================
+           【第一步：找人】 (通过 ID 把 XML 里的控件拉到 Kotlin 里来)
+           ========================================================= */
+        // val 意思是声明一个“不可变”的变量（代号）。
+        // findViewById<控件类型>(R.id.你在XML里写的ID)
+        val myTitle = findViewById<TextView>(R.id.myTitle)
+        val myInput = findViewById<EditText>(R.id.myInput)
+        val myButton = findViewById<Button>(R.id.myButton)
+
+        /* =========================================================
+           【第二步：做事】 (直接用代码修改控件的属性)
+           ========================================================= */
+        // 1. 改文字
+        myTitle.text = "准备就绪！"
+        
+        // 2. 获取输入框里的字（注意：要加 .toString() 转换成文本）
+        // val currentText = myInput.text.toString()
+
+        // 3. 控制出现和消失（你刚才特别提到的！）
+        // View.VISIBLE   -> 出现（默认）
+        // View.INVISIBLE -> 隐身（看不见，但还占着位置）
+        // View.GONE      -> 消失（看不见，且把位置腾出来）
+        // myTitle.visibility = View.GONE 
+
+        /* =========================================================
+           【第三步：触发逻辑】 (给控件装上“监听耳朵”，等待用户操作)
+           ========================================================= */
+        // setOnClickListener 就是“设置点击监听器”
+        // 只要用户点了一下这个按钮，大括号 { } 里面的代码就会立刻执行！
+        myButton.setOnClickListener {
+            
+            // 动作 1：拿到用户在输入框里打的字
+            val userName = myInput.text.toString()
+            
+            // 动作 2：做个判断（如果用户没打字）
+            if (userName.isEmpty()) {
+                myTitle.text = "警告：名字不能为空！"
+            } else {
+                // 如果用户打了字，就把文字改掉
+                // Kotlin 里用 $ 符号可以直接把变量拼接到字符串里
+                myTitle.text = "欢迎你，大侠 $userName！"
+                
+                // 动作 3：点击完按钮后，让输入框“消失”
+                myInput.visibility = View.GONE
+            }
+        }
+        
+    } // onCreate 结束
+}
