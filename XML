@@ -37,20 +37,33 @@
         android:visibility="visible" />
 
 </LinearLayout>
-二、 四大核心布局容器（决定零件怎么排版）
-布局就像是“收纳盒”，不同的收纳盒有不同的摆放规则。
 
+
+
+二、 核心布局容器（决定零件怎么排版）
+布局就像是“收纳盒”，不同的收纳盒有不同的摆放规则。
 
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 
-    【第二部分：四大核心布局】
-    注意：实际开发中，最外层通常只选其中一种布局。这里为了展示，我把它们写在一起。
+    【第二部分：核心布局与滚动容器】
+    注意：实际开发中，最外层通常只选其中一种布局。
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <!-- 
+        【🌟 补充神器：滚动视图 ScrollView】
+        特点：如果零件太多屏幕放不下，套上它就能上下滑动！
+        死规定：ScrollView 里面【只能有一个】直接的子布局（通常在里面放一个 LinearLayout 或 ConstraintLayout）。
+    -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- 这里面只能放一个布局容器 -->
+    </ScrollView>
 
     <!-- 
         【1. 线性布局 LinearLayout】
@@ -68,7 +81,7 @@
     </LinearLayout>
 
     <!-- 
-        【2. 约束布局 ConstraintLayout】 (你目前正在用的，最强大)
+        【2. 约束布局 ConstraintLayout】 (目前最强大、最自由)
         特点：太空中漂浮，靠“弹簧”互相拉扯来定位。
         专属代码 (四根基础弹簧)：
         - app:layout_constraintTop_toTopOf="parent" (顶部对齐父容器)
@@ -89,7 +102,6 @@
         专属代码：
         - android:layout_centerInParent="true" (在父容器正中间)
         - android:layout_below="@+id/某个ID" (在谁的下方)
-        - android:layout_toEndOf="@+id/某个ID" (在谁的右方)
     -->
     <RelativeLayout
         android:layout_width="match_parent"
@@ -108,12 +120,69 @@
     </FrameLayout>
 
 </LinearLayout>
-三、 四大基础控件（用户能看到和操作的零件）
+
+
+
+
+三、 约束布局 (ConstraintLayout) 专属高级神技
+专门解决复杂排版、不等距对齐等高级需求。
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 
+        【神技 1：Guideline (隐形参考线)】
+        特点：在屏幕上建一堵隐形的墙，用户看不见，但控件可以对齐它。
+        - app:layout_constraintGuide_percent="0.3" (这根线永远在屏幕 30% 的位置)
+    -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_30"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <!-- 
+        【神技 2：Bias (偏移量 / 不等距居中)】
+        特点：当一个控件左右（或上下）都被拉了弹簧时，默认在正中间(0.5)。
+        用 Bias 可以调整它偏向哪一边。
+        - app:layout_constraintHorizontal_bias="0.2" (停在距离左边 20% 的位置)
+    -->
+    <Button
+        android:id="@+id/btn_bias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我偏向左边"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2" />
+
+    <!-- 
+        【神技 3：0dp (Match Constraints 填满约束)】
+        特点：在约束布局里，宽或高设为 0dp，意思是“填满你拉的弹簧之间的空隙”。
+        极其适合做“占满剩余空间”或“平分屏幕”的按钮。
+    -->
+    <Button
+        android:id="@+id/btn_fill"
+        android:layout_width="0dp" 
+        android:layout_height="wrap_content"
+        android:text="我会填满左右弹簧之间的空间"
+        app:layout_constraintStart_toStartOf="@+id/guideline_30"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+四、 基础与常用控件（用户能看到和操作的零件）
 这些是你往“收纳盒”里放的具体物品。
 
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 
-    【第三部分：四大基础控件】
+    【第三部分：常用控件大全】
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -124,7 +193,7 @@
     <!-- 
         【1. 文本框 TextView】 (只读文字)
         专属/常用代码：
-        - android:text="显示的文字" (建议把文字提取到 strings.xml，但新手直接写也行)
+        - android:text="显示的文字"
         - android:textColor="#000000" (文字颜色，#000000是黑色)
         - android:textSize="18sp" (文字大小，安卓里字号必须用 sp)
         - android:textStyle="bold|italic" (文字样式：粗体|斜体)
@@ -133,16 +202,10 @@
         - android:ellipsize="end" (文字太长显示不下时，在末尾显示省略号...)
     -->
     <TextView
-        android:id="@+id/myTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="这是一段很长很长的测试文字..."
-        android:textColor="#333333"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:maxLines="1"
-        android:ellipsize="end" />
+        android:text="这是一段测试文字..."
+        android:textSize="16sp" />
 
     <!-- 
         【2. 输入框 EditText】 (用户打字)
@@ -151,15 +214,12 @@
         - android:textColorHint="#999999" (提示词的颜色)
         - android:inputType="textPassword" (输入类型：密码模式，打字变成小黑点)
           * 其他 inputType: "number"(只能输数字), "text"(普通文本)
-        - android:maxLength="11" (限制最多输入多少个字符，比如手机号11位)
+        - android:maxLength="11" (限制最多输入多少个字符)
     -->
     <EditText
-        android:id="@+id/myEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:hint="请输入6位数字密码"
-        android:textColorHint="#AAAAAA"
         android:inputType="numberPassword"
         android:maxLength="6" />
 
@@ -167,34 +227,53 @@
         【3. 按钮 Button】 (点击交互)
         专属/常用代码：
         - android:text="确认提交" (按钮上的字)
-        - android:textAllCaps="false" (安卓默认会把按钮英文全变大写，设为false取消此设定)
-        - android:backgroundTint="#6200EE" (按钮的背景颜色，新版安卓推荐用这个改按钮颜色)
+        - android:textAllCaps="false" (取消按钮英文默认全大写的设定)
+        - android:backgroundTint="#FF5722" (按钮的背景颜色)
     -->
     <Button
-        android:id="@+id/myButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
         android:text="登录"
-        android:textAllCaps="false"
         android:backgroundTint="#FF5722"
         android:textColor="#FFFFFF" />
 
     <!-- 
         【4. 图片 ImageView】 (展示图片)
         专属/常用代码：
-        - android:src="@drawable/ic_launcher_background" (图片来源，通常放在 res/drawable 文件夹下)
+        - android:src="@mipmap/ic_launcher" (图片来源)
         - android:scaleType="centerCrop" (图片缩放模式)
           * centerCrop：按比例放大，填满控件，多余部分裁剪掉（最常用，不变形）
           * fitCenter：按比例缩小，完整显示图片，两边可能留白
-          * center：不缩放，直接把图片原封不动放中间
     -->
     <ImageView
-        android:id="@+id/myImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="20dp"
         android:src="@mipmap/ic_launcher"
         android:scaleType="centerCrop" />
 
+    <!-- 
+        【5. 开关 Switch / 勾选框 CheckBox】 (状态选择)
+        专属/常用代码：
+        - android:checked="true" (默认是否处于打开/勾选状态)
+    -->
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开启夜间模式 "
+        android:checked="true" />
+        
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我已阅读并同意用户协议" />
+
 </LinearLayout>
+💡 附录：UI 开发“黄金法则”
+尺寸单位别用错：
+文字大小永远用 sp（跟随系统字体大小缩放）。
+其他所有宽、高、间距永远用 dp。
+0dp 的真正含义：
+在 ConstraintLayout 里，0dp 不是宽度为零，而是**“填满你拉的弹簧之间的空隙”**（Match Constraints）。
+颜色怎么写：
+#FF0000 是红，#00FF00 是绿，#0000FF 是蓝，#000000 是黑，#FFFFFF 是白。
+神仙技巧： 记不住色号没关系，随便写个 #000000，代码左侧行号旁边会出现一个小色块。点击那个小色块，Android Studio 会弹出一个调色板，让你直接用鼠标选颜色！
