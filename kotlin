@@ -10,8 +10,10 @@ C++ 对应： auto
 Kotlin 写法： var age = 18 ；下一行可以写 age = 19。
 🌟 铁律： 在 Kotlin 中，能用 val 就绝不用 var。这能极大减少 Bug。
 
+
+
 2. 终极条件判断：when (吊打 C++ 的 switch)
-你刚才问到的 when，是 Kotlin 里最爽的语法之一。
+ when，是 Kotlin 里最爽的语法之一。
 在 C++ 里，switch 只能判断整数或枚举，而且每个 case 后面必须写烦人的 break;，否则会“穿透”引发灾难。
 Kotlin 的 when 不需要 break，且什么都能判断！
 
@@ -49,6 +51,8 @@ val msg1 = "你好 $name，你今年 $age 岁了。"
 
 // 如果要调用函数或属性，用 ${} 括起来
 val msg2 = "你的名字有 ${name.length} 个字。" 
+
+
 4. 彻底消灭空指针：? 和 ?. (Kotlin 最伟大的发明)
 在 C++ 里，如果你访问了一个空指针（NULL 或 nullptr），程序会直接崩溃（段错误 Segfault）。
 Kotlin 在编译阶段就强行杜绝了空指针。
@@ -67,6 +71,8 @@ Kotlin 只需要一个符号：
 var name: String? = null
 // 如果 name 是空的，这行代码会自动跳过，绝对不会崩溃！
 val length = name?.length 
+
+
 5. if-else 是有返回值的！(替代三元运算符)
 在 C++ 里，我们经常用三元运算符：int max = (a > b) ? a : b;
 Kotlin 没有三元运算符，因为它的 if-else 直接就能当值用：
