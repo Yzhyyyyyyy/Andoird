@@ -22,29 +22,48 @@
 
 ---
 
-## 🌟 核心代码剖析（含参数传递）
+## 🌟 核心代码剖析：Main 的参数怎么往下传？
 
-只要看懂这三行灵魂代码，带参数的点击事件就彻底通关了：
+在 Compose 中，Main（老板）传给组件（打工人）的东西分为两种：**普通数据** 和 **处理逻辑（函数）**。
 
-**1. 声明坑位（打工人内部）：**
+### 1. Main 里面怎么传？（老板派发任务）
+在 `MainScreen` 中调用 `GameCard` 时，老板需要把这两样东西都塞进括号里：
+
 ```kotlin
-onClick: (String) -> Unit
+GameCard(
+    // 👇 传普通数据：老板告诉打工人“你叫什么名字”
+    gameName = "原神", 
+    
+    // 👇 传处理逻辑（函数）：老板把“管道”交给打工人
+    onClick = { name -> 
+        // 这里的 name，就是用来接住打工人以后塞进来的那个 String！
+        clickedGameName = name 
+    }
+)
 ```
-> **解释**：这叫“函数类型”。它就像一个带有入口的管道，`(String)` 代表必须往里面塞一个字符串，`-> Unit` 代表不需要返回结果。打工人告诉老板：“给我传一段代码，这段代码得能接收一个 String”。
+> **注意**：Main 在这里并没有执行 `onClick` 里的代码！Main 只是把 `{ name -> ... }` 这个代码块（管道）**打包**，作为参数交给了 `GameCard`。意思是：“你先拿着，等你被点击的时候再用。”
 
-**2. 触发并传参（打工人内部的 clickable 中）：**
-```kotlin
-onClick(gameName)
-```
-> **解释**：当玩家手指点下时，打工人拿出老板给的管道，并**把自己的数据（gameName）塞进括号里**。这一瞬间，字符串就像子弹一样顺着管道发射回了主页面！
+### 2. 打工人这里面怎么用？（接收并使用）
+镜头来到 `GameCard` 内部。打工人在函数签名里接住了老板传下来的这两样东西：
 
-**3. 填坑并接收（老板 Main 页面中）：**
 ```kotlin
-onClick = { name -> 
-    clickedGameName = name 
+@Composable
+fun GameCard(
+    gameName: String,         // 👈 接住普通数据（此时 gameName 就是 "原神"）
+    onClick: (String) -> Unit // 👈 接住处理逻辑（此时 onClick 就是老板给的那个管道）
+) {
+    Card(
+        modifier = Modifier.clickable { 
+            // 👇 怎么用？直接加上括号调用它！
+            // 并且把自己的 gameName 塞进括号里，发射回给老板！
+            onClick(gameName) 
+        }
+    ) {
+        Text(text = gameName) // 使用普通数据渲染 UI
+    }
 }
 ```
-> **解释**：老板在调用组件时，把具体的处理逻辑（管道）传下去。`{ name -> ... }` 里的 `name`，就是用来**精准接住**打工人发射上来的那个字符串！接住后，老板就可以拿它去修改状态或跳转页面了。
+> **总结**：`onClick: (String) -> Unit` 就是一个带有入口的管道，`(String)` 代表必须往里面塞一个字符串。打工人在 `clickable` 里执行 `onClick(gameName)`，字符串就像子弹一样顺着管道发射回了主页面！
 
 ---
 
@@ -105,14 +124,13 @@ fun MainScreen() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // 👈 核心3：填坑（调用组件并处理事件）
+        // 👈 核心3：填坑（调用组件，把数据和事件逻辑传下去）
         GameCard(
             gameName = "原神",
             description = "开放世界冒险RPG",
             onClick = { name -> 
                 // 接收到底层传来的 name，并更新状态
                 clickedGameName = name 
-                // 真实项目中这里通常是：navController.navigate("detail/$name")
             }
         )
 
