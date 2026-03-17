@@ -22,6 +22,32 @@
 
 ---
 
+## 🌟 核心代码剖析（含参数传递）
+
+只要看懂这三行灵魂代码，带参数的点击事件就彻底通关了：
+
+**1. 声明坑位（打工人内部）：**
+```kotlin
+onClick: (String) -> Unit
+```
+> **解释**：这叫“函数类型”。它就像一个带有入口的管道，`(String)` 代表必须往里面塞一个字符串，`-> Unit` 代表不需要返回结果。打工人告诉老板：“给我传一段代码，这段代码得能接收一个 String”。
+
+**2. 触发并传参（打工人内部的 clickable 中）：**
+```kotlin
+onClick(gameName)
+```
+> **解释**：当玩家手指点下时，打工人拿出老板给的管道，并**把自己的数据（gameName）塞进括号里**。这一瞬间，字符串就像子弹一样顺着管道发射回了主页面！
+
+**3. 填坑并接收（老板 Main 页面中）：**
+```kotlin
+onClick = { name -> 
+    clickedGameName = name 
+}
+```
+> **解释**：老板在调用组件时，把具体的处理逻辑（管道）传下去。`{ name -> ... }` 里的 `name`，就是用来**精准接住**打工人发射上来的那个字符串！接住后，老板就可以拿它去修改状态或跳转页面了。
+
+---
+
 ## 💻 完整代码模板
 
 ### 1. 底层组件：GameCard.kt (打工人)
@@ -37,15 +63,15 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun GameCard(
-    gameName: String,       // 外部传入的数据
+    gameName: String,       // 外部传入的数据（打工人自己的数据）
     description: String,    // 外部传入的数据
-    onClick: (String) -> Unit // 👈 第一步：挖坑（声明点击事件）
+    onClick: (String) -> Unit // 👈 核心1：挖坑（声明带有 String 参数的点击事件）
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            // 👈 第二步：触发（万物皆可点击）
+            // 👈 核心2：触发（万物皆可点击）
             .clickable { 
                 // 将自己的 gameName 作为参数，向上抛给老板
                 onClick(gameName) 
@@ -79,7 +105,7 @@ fun MainScreen() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // 👈 第三步：填坑（调用组件并处理事件）
+        // 👈 核心3：填坑（调用组件并处理事件）
         GameCard(
             gameName = "原神",
             description = "开放世界冒险RPG",
