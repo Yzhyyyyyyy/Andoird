@@ -58,12 +58,18 @@ Button(
     shape = RoundedCornerShape(16.dp), // 形状：圆角矩形，圆角弧度 16dp
     colors = ButtonDefaults.buttonColors(
         containerColor = Color(0xFF0F172A), // 按钮底色
-        contentColor = Color.White          // 按钮内部内容(文字)的颜色
+        contentColor = Color.White          // 按钮内部内容(文字/图标)的默认颜色
     )
 ) {
+    // 这里的 Text 不需要再写 color = Color.White，它会自动继承 contentColor！
     Text(text = "选择游戏", fontSize = 18.sp, fontWeight = FontWeight.Bold)
 }
 ```
+
+### ❓ 为什么 Button 的颜色设置这么复杂（ButtonDefaults）？
+不要直接在 `Text` 里写死颜色，而是使用 `ButtonDefaults.buttonColors` 的 `contentColor`，原因有两个：
+1.  **大喇叭广播（统一变色）**：`contentColor` 会向按钮内部广播，里面的所有 `Text` 和 `Icon` 都会自动变成这个颜色，不用挨个设置。
+2.  **智能状态管理（防呆设计）**：`ButtonDefaults` 内部自带了“禁用状态（Disabled）”的颜色配置。如果按钮不可点击，它会自动把背景和文字都变成灰色。如果你在 `Text` 里把颜色写死为白色，禁用时文字依然是刺眼的白色，会非常违和！
 
 ## 5. Icon：矢量小图标 🎨
 
@@ -89,8 +95,6 @@ Compose 内置了 Material Design 图标库，你可以通过输入 `Icons.Defau
 *   `Icons.Default.Person`：用户头像 👤
 *   `Icons.Default.Add`：加号 ➕
 *   `Icons.Default.Check`：打勾 ✔️
-
-*(注：Compose 默认只包含最基础的图标。如果需要几千个完整的图标库，需要在 `build.gradle` 中添加 `material-icons-extended` 依赖。)*
 
 ## 💡 核心知识点：dp 与 sp 的区别
 在 Android 开发中，有两个非常重要的尺寸单位，绝不能混用：
