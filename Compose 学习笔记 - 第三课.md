@@ -65,6 +65,33 @@ Button(
 }
 ```
 
+## 5. Icon：矢量小图标 🎨
+
+`Icon` 是专门用来显示简单、纯色形状的组件（如返回箭头、设置齿轮、小爱心等）。它使用的是**矢量图**，无论怎么放大都不会模糊，而且可以通过代码一秒换色！
+
+**核心代码：**
+```kotlin
+Icon(
+    imageVector = Icons.Default.Star, // 1. 选图案：Compose 自带的星星图标
+    contentDescription = "收藏",      // 2. 盲人辅助：告诉读屏软件这是什么（必填项，不写会报黄线）
+    tint = Color.Yellow,              // 3. 一秒上色：将图标刷成黄色
+    modifier = Modifier.size(24.dp)   // 4. 大小：设置图标宽高为 24dp
+)
+```
+
+**有哪些自带的图标可以用？**
+Compose 内置了 Material Design 图标库，你可以通过输入 `Icons.Default.` 然后让代码编辑器自动提示来选择。常用的有：
+*   `Icons.Default.ArrowBack`：返回箭头 ⬅️
+*   `Icons.Default.Settings`：设置齿轮 ⚙️
+*   `Icons.Default.Favorite`：爱心 ❤️
+*   `Icons.Default.Home`：主页 🏠
+*   `Icons.Default.Search`：放大镜搜索 🔍
+*   `Icons.Default.Person`：用户头像 👤
+*   `Icons.Default.Add`：加号 ➕
+*   `Icons.Default.Check`：打勾 ✔️
+
+*(注：Compose 默认只包含最基础的图标。如果需要几千个完整的图标库，需要在 `build.gradle` 中添加 `material-icons-extended` 依赖。)*
+
 ## 💡 核心知识点：dp 与 sp 的区别
 在 Android 开发中，有两个非常重要的尺寸单位，绝不能混用：
 *   **`dp` (Density-independent Pixels)**：用于**宽度、高度、间距、圆角**等。它能保证在不同分辨率的手机上，看起来物理大小差不多。
