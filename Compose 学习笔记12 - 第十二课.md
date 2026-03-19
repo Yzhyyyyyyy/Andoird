@@ -55,8 +55,6 @@ val animatedColor by animateColorAsState(
 
 ---
 
----
-
 ## 3. 纯逻辑魔法：抽卡概率与保底机制 🎲
 
 虽然这不是 Compose 特有的 API，但它是业务开发中极其重要的一环：**如何用 Kotlin 代码实现复杂的业务规则。**
