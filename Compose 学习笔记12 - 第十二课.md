@@ -55,35 +55,13 @@ val animatedColor by animateColorAsState(
 
 ---
 
-## 3. Canvas 进阶：径向渐变画笔 (Radial Gradient) 🖌️
-
-### 🌟 3.1 什么是径向渐变？
-在第 2 课中，我们用 `drawCircle` 画了纯色的圆。但在实际 UI 设计中，为了做出“发光”、“光晕”的高级质感，我们需要让颜色从中心向四周逐渐变淡。
-
-### 💻 3.2 详细代码实例：绘制魔法光晕
-```kotlin
-Canvas(modifier = Modifier.fillMaxSize()) {
-    drawCircle(
-        // 使用径向渐变刷子
-        brush = Brush.radialGradient(
-            // 颜色列表：从半透明的金色，渐变到完全透明
-            colors = listOf(Color(0xFFFFE082).copy(alpha = 0.35f), Color.Transparent),
-            // 圆心位置：屏幕宽度的 80%，高度的 10% (右上角)
-            center = Offset(size.width * 0.8f, size.height * 0.1f),
-            // 渐变半径：屏幕宽度的 70%
-            radius = size.width * 0.7f
-        )
-    )
-}
-```
-
 ---
 
-## 4. 纯逻辑魔法：抽卡概率与保底机制 🎲
+## 3. 纯逻辑魔法：抽卡概率与保底机制 🎲
 
 虽然这不是 Compose 特有的 API，但它是业务开发中极其重要的一环：**如何用 Kotlin 代码实现复杂的业务规则。**
 
-### 🧠 4.1 核心逻辑拆解（原神抽卡机制）
+### 🧠 3.1 核心逻辑拆解（原神抽卡机制）
 1.  **软保底（Soft Pity）概率递增**：
     *   前 73 抽，出五星的概率是固定的 `0.6%`。
     *   从第 74 抽开始，每抽一次，概率增加 `6%`。
